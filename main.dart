@@ -14,6 +14,7 @@ void main() async {
         ChangeNotifierProvider<Cart>(
           create: (context) => Cart(),
         ),
+
         // Add other providers if needed
       ],
       child: const MyApp(),
