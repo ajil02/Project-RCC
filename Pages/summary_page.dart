@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/pages/student_home.dart';
 import 'package:project/widgets/cart.dart';
+import 'package:project/widgets/drawer.dart';
 
 class SummaryPage extends StatelessWidget {
   final Cart cart;
@@ -50,7 +51,7 @@ class SummaryPage extends StatelessWidget {
                     ListTile(
                       title: Text(item.itemName),
                       subtitle: Text(
-                        'Price: \$${item.price.toStringAsFixed(2)} | Quantity: ${item.quantity}',
+                        'Price: Rs ${item.price.toStringAsFixed(2)} | Quantity: ${item.quantity}',
                       ),
                     ),
                 ],
@@ -71,6 +72,7 @@ class SummaryPage extends StatelessWidget {
           ),
         ),
       ),
+      drawer: DrawerWidget(),
     );
   }
 }
