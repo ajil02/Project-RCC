@@ -2,10 +2,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project/pages/cart_page.dart';
 import 'package:project/widgets/cart.dart';
+import 'package:project/widgets/drawer.dart';
+import 'package:project/widgets/note_search.dart';
 import 'package:provider/provider.dart';
 
-class StudentHome extends StatelessWidget {
-  StudentHome({Key? key});
+class StudentHome extends StatefulWidget {
+  @override
+  _StudentHomeState createState() => _StudentHomeState();
+}
+
+class _StudentHomeState extends State<StudentHome> {
+  late List<DocumentSnapshot> filteredNotesList;
+
+  @override
+  void initState() {
+    super.initState();
+    filteredNotesList = [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +27,46 @@ class StudentHome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Student Home Page'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              QuerySnapshot? snapshot =
+                  await FirebaseFirestore.instance.collection('notes').get();
+
+              var result = await showSearch(
+                context: context,
+                delegate: NoteSearch(notesList: snapshot.docs),
+              );
+
+              if (result != null && result.isNotEmpty) {
+                Map<String, dynamic> data = result as Map<String, dynamic>;
+                cart.addItem(
+                  CartItem(
+                    itemName: data['note'],
+                    price: data['price'],
+                  ),
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Added to Cart: ${data['note']}'),
+                  ),
+                );
+              }
+              setState(() {});
+            },
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('notes').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List notesList = snapshot.data!.docs;
+            List notesList = filteredNotesList.isNotEmpty
+                ? filteredNotesList
+                : snapshot.data!.docs;
+
             return ListView.builder(
               itemCount: notesList.length,
               itemBuilder: (context, index) {
@@ -27,7 +74,7 @@ class StudentHome extends StatelessWidget {
                 Map<String, dynamic> data =
                     document.data() as Map<String, dynamic>;
                 String noteText = data['note'];
-                String? imageUrl = data['image_url']; // Change to String?
+                String? imageUrl = data['image_url'];
 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -47,7 +94,6 @@ class StudentHome extends StatelessWidget {
                         : Container(),
                     trailing: ElevatedButton(
                       onPressed: () {
-                        // Add the selected item to the cart
                         cart.addItem(
                           CartItem(
                             itemName: noteText,
@@ -74,7 +120,6 @@ class StudentHome extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to the CartPage when the FAB is pressed
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CartPage(cart: cart)),
@@ -82,6 +127,7 @@ class StudentHome extends StatelessWidget {
         },
         child: Icon(Icons.shopping_cart),
       ),
+      drawer: DrawerWidget(), // Add DrawerWidget to the Drawer
     );
   }
 }
