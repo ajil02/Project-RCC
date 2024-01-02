@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:project/services/firestore.dart';
 
 class AdminHome extends StatefulWidget {
-  const AdminHome({super.key});
+  const AdminHome({Key? key}) : super(key: key);
 
   @override
   State<AdminHome> createState() => _AdminHomeState();
@@ -30,7 +30,10 @@ class _AdminHomeState extends State<AdminHome> {
             ),
             TextField(
               controller: imageUrlController,
-              decoration: InputDecoration(labelText: 'Image URL'),
+              decoration: InputDecoration(
+                labelText: 'Image URL',
+                hintText: 'e.g., images/biriyani.jpg',
+              ),
             ),
             TextField(
               controller: priceController,
@@ -55,13 +58,26 @@ class _AdminHomeState extends State<AdminHome> {
                   int.parse(quantityController.text),
                 );
               } else {
-                firestoreService.updateNote(
-                  docID,
-                  textController.text,
-                  imageUrlController.text,
-                  double.parse(priceController.text),
-                  int.parse(quantityController.text),
-                );
+                Map<String, dynamic> updatedFields = {};
+
+                if (textController.text.isNotEmpty) {
+                  updatedFields['note'] = textController.text;
+                }
+
+                if (imageUrlController.text.isNotEmpty) {
+                  updatedFields['image_url'] = imageUrlController.text;
+                }
+
+                if (priceController.text.isNotEmpty) {
+                  updatedFields['price'] = double.parse(priceController.text);
+                }
+
+                if (quantityController.text.isNotEmpty) {
+                  updatedFields['quantity'] =
+                      int.parse(quantityController.text);
+                }
+
+                firestoreService.updateNoteFields(docID, updatedFields);
               }
 
               textController.clear();
@@ -104,36 +120,44 @@ class _AdminHomeState extends State<AdminHome> {
                 double price = data['price'];
                 int quantity = data['quantity'];
 
-                return ListTile(
-                  title: Text(noteText),
-                  // ignore: unnecessary_null_comparison
-                  leading: imageUrl != null
-                      ? Image.network(
-                          imageUrl,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Price: Rs ${price.toStringAsFixed(2)}'),
-                      Text('Quantity: $quantity'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () => openNoteBox(docID: docID),
-                        icon: const Icon(Icons.settings),
-                      ),
-                      IconButton(
-                        onPressed: () => firestoreService.deleteNote(docID),
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    title: Text(noteText),
+                    // ignore: unnecessary_null_comparison
+                    leading: imageUrl != null
+                        ? Image.network(
+                            imageUrl,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'images/placeholder.jpg', // Add a placeholder image
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Price: Rs ${price.toStringAsFixed(2)}'),
+                        Text('Quantity: $quantity'),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () => openNoteBox(docID: docID),
+                          icon: const Icon(Icons.settings),
+                        ),
+                        IconButton(
+                          onPressed: () => firestoreService.deleteNote(docID),
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
