@@ -22,15 +22,9 @@ class FirestoreService {
     return notesStream;
   }
 
-  Future<void> updateNote(String docID, String newNote, String newImageUrl,
-      double newPrice, int newQuantity) {
-    return notes.doc(docID).update({
-      'note': newNote,
-      'image_url': newImageUrl,
-      'price': newPrice,
-      'quantity': newQuantity,
-      'timestamp': Timestamp.now(),
-    });
+  Future<void> updateNoteFields(
+      String docID, Map<String, dynamic> updatedFields) {
+    return notes.doc(docID).update(updatedFields);
   }
 
   Future<void> deleteNote(String docID) {
