@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 class CartPage extends StatelessWidget {
   final Cart cart;
   CartPage({required this.cart});
+
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
@@ -86,13 +87,16 @@ class CartPage extends StatelessWidget {
           children: [
             Text('Total: Rs ${cart.total.toStringAsFixed(2)}'),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ReceiptPage(cart: cart)),
-                );
-              },
+              onPressed: cart.items.isEmpty
+                  ? null // Disable button when cart is empty
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReceiptPage(cart: cart),
+                        ),
+                      );
+                    },
               child: Text('Checkout'),
             ),
           ],
