@@ -34,7 +34,7 @@ class CartPage extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '\$${cart.items[index].price.toStringAsFixed(2)}',
+                      'Rs ${cart.items[index].price.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Colors.grey,
                       ),
@@ -53,7 +53,6 @@ class CartPage extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Implement logic to decrease the quantity
                         cart.decreaseQuantity(index);
                       },
                       child: Text('-'),
@@ -61,15 +60,13 @@ class CartPage extends StatelessWidget {
                     SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
-                        // Implement logic to increase the quantity
-                        cart.increaseQuantity(index);
+                        cart.increaseQuantity(index, context);
                       },
                       child: Text('+'),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
-                        // Implement logic to remove the item from the cart
                         cart.removeItem(index);
                       },
                       child: Text('Delete'),
@@ -87,7 +84,7 @@ class CartPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Total: \$${cart.total.toStringAsFixed(2)}'),
+            Text('Total: Rs ${cart.total.toStringAsFixed(2)}'),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -95,11 +92,6 @@ class CartPage extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => ReceiptPage(cart: cart)),
                 );
-
-                // Implement checkout logic
-                // You can clear the cart or navigate to a checkout page.
-                // For simplicity, we are just printing a message here.
-                //print('Checkout Pressed');
               },
               child: Text('Checkout'),
             ),
