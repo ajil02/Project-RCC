@@ -26,7 +26,6 @@ class _StudentHomeState extends State<StudentHome> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Student Home Page'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -41,18 +40,25 @@ class _StudentHomeState extends State<StudentHome> {
 
               if (result != null && result.isNotEmpty) {
                 Map<String, dynamic> data = result as Map<String, dynamic>;
-                cart.addItem(
-                  CartItem(
-                    itemName: data['note'],
-                    price: data['price'],
-                  ),
-                );
+                int availableQuantity = data['quantity'] ?? 0;
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Added to Cart: ${data['note']}'),
-                  ),
-                );
+                if (availableQuantity > 0) {
+                  cart.addItem(
+                    CartItem(
+                      itemName: data['note'],
+                      price: data['price'],
+                      availableQuantity: availableQuantity,
+                    ),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Added to Cart: ${data['note']}'),
+                    ),
+                  );
+                } else {
+                  _showUnavailableMessage(context);
+                }
               }
               setState(() {});
             },
@@ -94,18 +100,25 @@ class _StudentHomeState extends State<StudentHome> {
                         : Container(),
                     trailing: ElevatedButton(
                       onPressed: () {
-                        cart.addItem(
-                          CartItem(
-                            itemName: noteText,
-                            price: data['price'],
-                          ),
-                        );
+                        int availableQuantity = data['quantity'] ?? 0;
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Added to Cart: $noteText'),
-                          ),
-                        );
+                        if (availableQuantity > 0) {
+                          cart.addItem(
+                            CartItem(
+                              itemName: noteText,
+                              price: data['price'],
+                              availableQuantity: availableQuantity,
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Added to Cart: $noteText'),
+                            ),
+                          );
+                        } else {
+                          _showUnavailableMessage(context);
+                        }
                       },
                       child: Text('Add to Cart'),
                     ),
@@ -127,7 +140,15 @@ class _StudentHomeState extends State<StudentHome> {
         },
         child: Icon(Icons.shopping_cart),
       ),
-      drawer: DrawerWidget(), // Add DrawerWidget to the Drawer
+      drawer: DrawerWidget(),
+    );
+  }
+
+  void _showUnavailableMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Item is not available.'),
+      ),
     );
   }
 }
