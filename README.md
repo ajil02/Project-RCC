@@ -1,8 +1,8 @@
-                        Rajagiri Canteen Connect - Canteen Food Ordering App
+   Rajagiri Canteen Connect - Canteen Food Ordering App
 
 Welcome to RCC Canteen App, your go-to solution for a seamless and efficient canteen experience! Whether you're a hungry student eager to place your order or an admin looking to manage the menu and track orders, RCC Canteen App has got you covered.
 
-Features
+   Features
 
 For Students
 
@@ -17,6 +17,7 @@ Order History at Your Fingertips: Keep track of your culinary adventures with th
 Convenient Cart Management: Add items to your cart as you explore the menu, and make adjustments before checkout. The cart feature ensures flexibility and control over your selections.
 
 For Admins
+
 Admin Access Control: Securely log in as an administrator to access powerful management features.
 
 Order Overview: Get a comprehensive view of all incoming orders. Stay organized and keep track of the culinary demands of the day.
